@@ -1,40 +1,30 @@
 package com.qa.ecom.tests;
 
-import com.microsoft.playwright.Page;
-import com.qa.ecom.factory.PlaywrightFactory;
-import com.qa.ecom.pages.HomePage;
+import com.qa.ecom.base.BaseTest;
+import com.qa.ecom.constants.AppConstants;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class HomePageTest {
-
-    PlaywrightFactory pf;
-    Page page;
-    HomePage homePage;
-
-    @BeforeTest
-    public void setUp(){
-        pf = new PlaywrightFactory();
-        page = pf.initBrowser("chrome");
-        homePage = new HomePage(page);
-    }
-
+public class HomePageTest extends BaseTest {
     @Test
     public void homePageTitleTest(){
         String actual = homePage.getTitle();
-        Assert.assertEquals(actual,"STORE");
+        Assert.assertEquals(actual, AppConstants.PAGE_TITLE);
     }
 
-    @Test
-    public void homePageLoginTest(){
-        homePage.login("test123","test123");
+    @Test(dataProvider = "getCredentials")
+    public void homePageLoginTest(String username, String password){
+        homePage.login(username,password);
+    }
+
+    @DataProvider
+    public Object[][] getCredentials(){
+        return new Object[][] {
+            {properties.getProperty("username"),properties.getProperty("password")}
+        };
     }
 
 
-    @AfterTest
-    public void tearDown(){
-        page.context().browser().close();
-    }
+
 }
